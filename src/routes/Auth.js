@@ -3,6 +3,9 @@ import { authService } from "fbase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 
 // export default () => <span>Auth</span>;
@@ -49,6 +52,25 @@ const Auth = () => {
 
   const toggleAccount = () => setNewAccount((prev) => !prev);
 
+  const onSicialClick = async (event) => {
+    const {
+      target: { name },
+    } = event;
+
+    let provider;
+    if (name === "google") {
+      provider = new GoogleAuthProvider();
+    } else {
+      provider = new GithubAuthProvider();
+    }
+    try {
+      const result = await signInWithPopup(authService, provider);
+      console.log(result);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
   return (
     <>
       <form onSubmit={onSubmit}>
@@ -78,8 +100,12 @@ const Auth = () => {
         {newAccount ? "Sign in." : "Create Account"}
       </span>
       <div>
-        <button>Continue with Google</button>
-        <button>Continue with Github</button>
+        <button onClick={onSicialClick} name="google">
+          Continue with Google
+        </button>
+        <button onClick={onSicialClick} name="github">
+          Continue with Github
+        </button>
       </div>
     </>
   );
